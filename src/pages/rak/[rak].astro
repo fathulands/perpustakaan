@@ -1,0 +1,29 @@
+---
+import Base from '../../layouts/Base.astro';
+import KartuKatalog from '../../components/KartuKatalog.astro';
+import { daftarRak, type Rak } from '../../data/rak';
+import { ambilKoleksi, nomorInduk } from '../../data/koleksi';
+
+export function getStaticPaths() {
+  return daftarRak.map((rak) => ({ params: { rak: rak.slug }, props: { rak } }));
+}
+
+const { rak } = Astro.props as { rak: Rak };
+const semua = await ambilKoleksi();
+const isi = semua.filter((i) => i.data.rak === rak.slug);
+---
+
+<Base judul={rak.nama} deskripsi={rak.deskripsi}>
+  <p class="kembali"><a href="/">← Kembali ke ruang baca</a></p>
+  <p class="label-mono">Klasifikasi {rak.kode}</p>
+  <h1>{rak.nama}</h1>
+  <p>{rak.deskripsi}</p>
+
+  {isi.length === 0 ? (
+    <p class="label-mono">Belum ada judul di rak ini.</p>
+  ) : (
+    <ul class="daftar-kartu">
+      {isi.map((item) => <KartuKatalog item={item} nomor={nomorInduk(item, semua)} />)}
+    </ul>
+  )}
+</Base>

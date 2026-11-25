@@ -1,0 +1,20 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import { cariRak, formatTanggal } from '../data/rak';
+
+interface Props {
+  item: CollectionEntry<'koleksi'>;
+  nomor: number;
+}
+
+const { item, nomor } = Astro.props;
+const rak = cariRak(item.data.rak);
+---
+
+<li class="kartu" style={`--warna-rak: ${rak.warna}`}>
+  <div class="nomor">{rak.kode} / {String(nomor).padStart(3, '0')}</div>
+  <h3><a href={`/koleksi/${item.id}/`}>{item.data.judul}</a></h3>
+  <div class="meta">Masuk koleksi: {formatTanggal(item.data.tanggal)}</div>
+  {item.data.nilai && <div class="meta">Nilai: {'★'.repeat(item.data.nilai)}{'☆'.repeat(5 - item.data.nilai)}</div>}
+  <p>{item.data.ringkasan}</p>
+</li>

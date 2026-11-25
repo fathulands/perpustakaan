@@ -1,0 +1,38 @@
+---
+import { render } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import { cariRak, formatTanggal } from '../../data/rak';
+import { ambilKoleksi, nomorInduk, type Item } from '../../data/koleksi';
+
+export async function getStaticPaths() {
+  const semua = await ambilKoleksi();
+  return semua.map((item) => ({
+    params: { id: item.id },
+    props: { item, nomor: nomorInduk(item, semua) },
+  }));
+}
+
+const { item, nomor } = Astro.props as { item: Item; nomor: number };
+const { Content } = await render(item);
+const rak = cariRak(item.data.rak);
+---
+
+<Base judul={item.data.judul} deskripsi={item.data.ringkasan}>
+  <article class="tulisan">
+    <p class="kembali"><a href={`/rak/${rak.slug}/`}>← {rak.nama}</a></p>
+    <div class="kartu" style={`--warna-rak: ${rak.warna}`}>
+      <div class="nomor">{rak.kode} / {String(nomor).padStart(3, '0')}</div>
+      <h1>{item.data.judul}</h1>
+      <div class="meta">Rak: {rak.nama}</div>
+      <div class="meta">Masuk koleksi: {formatTanggal(item.data.tanggal)}</div>
+      {item.data.nilai && <div class="meta">Nilai: {'★'.repeat(item.data.nilai)}{'☆'.repeat(5 - item.data.nilai)}</div>}
+      {item.data.tautan && <div class="meta">Tautan: <a href={item.data.tautan}>{item.data.tautan}</a></div>}
+      <p>
+        {item.data.tag.map((t) => <span class="tag">{t}</span>)}
+      </p>
+    </div>
+    <div class="isi">
+      <Content />
+    </div>
+  </article>
+</Base>
