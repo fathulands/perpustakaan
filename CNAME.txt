@@ -1,0 +1,1 @@
+echo "fathul-ansori.my.id" > public/CNAME
