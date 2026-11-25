@@ -1,0 +1,46 @@
+---
+import Base from '../layouts/Base.astro';
+import { profil, tautan } from '../data/profil';
+---
+
+<Base judul="Pustakawan" deskripsi={profil.sapaan}>
+  <p class="kembali"><a href="/">← Kembali ke ruang baca</a></p>
+
+  <section class="kartu-anggota">
+    <div class="anggota-kepala">
+      <span>Kartu Anggota</span>
+      <span>Perpustakaan Fathul</span>
+    </div>
+    <div class="anggota-isi">
+      <div class="cap cap-besar" aria-hidden="true">{profil.nama.charAt(0)}</div>
+      <dl>
+        <dt>Nama</dt><dd><h1>{profil.nama}</h1></dd>
+        <dt>No. Anggota</dt><dd>{profil.nomorAnggota}</dd>
+        <dt>Anggota sejak</dt><dd>{profil.anggotaSejak}</dd>
+        {profil.pekerjaan && <><dt>Pekerjaan</dt><dd>{profil.pekerjaan}</dd></>}
+        {profil.kuliah && <><dt>Kuliah</dt><dd>{profil.kuliah}</dd></>}
+        {profil.minat.length > 0 && <><dt>Bidang minat</dt><dd>{profil.minat.join(' · ')}</dd></>}
+      </dl>
+    </div>
+  </section>
+
+  <section class="tulisan isi">
+    {profil.paragraf.map((p) => <p>{p}</p>)}
+
+    {tautan.length > 0 && (
+      <>
+        <h2>Temukan saya di</h2>
+        <ul class="daftar-tautan">
+          {tautan.map((t) => (
+            <li>
+              <span class="label-mono">{t.label}</span>
+              <a href={t.url} rel="me noopener" target={t.url.startsWith('mailto:') ? undefined : '_blank'}>
+                {t.url.replace(/^mailto:/, '').replace(/^https?:\/\//, '')}
+              </a>
+            </li>
+          ))}
+        </ul>
+      </>
+    )}
+  </section>
+</Base>

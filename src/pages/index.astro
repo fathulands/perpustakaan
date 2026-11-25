@@ -1,16 +1,57 @@
 ---
+import Base from '../layouts/Base.astro';
+import KartuKatalog from '../components/KartuKatalog.astro';
+import MejaPustakawan from '../components/MejaPustakawan.astro';
+import { daftarRak } from '../data/rak';
+import { ambilKoleksi, nomorInduk } from '../data/koleksi';
+
+const semua = await ambilKoleksi();
+const terbaru = semua.slice(0, 6);
 ---
 
-<html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<link rel="icon" href="/favicon.ico" />
-		<meta name="viewport" content="width=device-width" />
-		<meta name="generator" content={Astro.generator} />
-		<title>Astro</title>
-	</head>
-	<body>
-		<h1>Astro</h1>
-	</body>
-</html>
+<Base>
+  <p class="label-mono">Ruang Baca</p>
+  <h1>Selamat datang di perpustakaan pribadi saya.</h1>
+  <p>Di sini saya menyimpan catatan: review sistem operasi, buku, dan software, juga aplikasi yang saya buat. Ambil buku dari rak mana saja.</p>
+
+  <MejaPustakawan />
+
+  {daftarRak.map((rak) => {
+    const isi = semua.filter((i) => i.data.rak === rak.slug);
+    return (
+      <section class="rak" aria-labelledby={`rak-${rak.slug}`}>
+        <div class="rak-kepala">
+          <h2 id={`rak-${rak.slug}`}><a href={`/rak/${rak.slug}/`}>{rak.nama}</a></h2>
+          <span class="label-mono">{rak.kode} · {isi.length} judul</span>
+        </div>
+        <div class="rak-kepala"><p>{rak.deskripsi}</p></div>
+        <div class="papan">
+          {isi.length === 0 ? (
+            <span class="papan-kosong">Rak ini masih kosong.</span>
+          ) : (
+            isi.map((item, i) => (
+              <a
+                class="punggung"
+                href={`/koleksi/${item.id}/`}
+                title={item.data.judul}
+                style={`background:${rak.warna}; height:${150 + ((i * 37) % 30)}px`}
+              >
+                <span>{item.data.judul}</span>
+              </a>
+            ))
+          )}
+        </div>
+        <div class="alas" aria-hidden="true"></div>
+      </section>
+    );
+  })}
+
+  {terbaru.length > 0 && (
+    <section>
+      <h2>Baru masuk koleksi</h2>
+      <ul class="daftar-kartu">
+        {terbaru.map((item) => <KartuKatalog item={item} nomor={nomorInduk(item, semua)} />)}
+      </ul>
+    </section>
+  )}
+</Base>

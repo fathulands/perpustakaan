@@ -1,0 +1,49 @@
+---
+import '../styles/global.css';
+import { daftarRak } from '../data/rak';
+
+interface Props {
+  judul?: string;
+  deskripsi?: string;
+}
+
+const { judul, deskripsi = 'Perpustakaan pribadi Fathul: catatan, review OS, buku, software, dan aplikasi buatan sendiri.' } = Astro.props;
+const judulLengkap = judul ? `${judul} · Perpustakaan Fathul` : 'Perpustakaan Fathul';
+const path = Astro.url.pathname;
+---
+
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{judulLengkap}</title>
+    <meta name="description" content={deskripsi} />
+    <link rel="canonical" href={new URL(path, Astro.site)} />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+  </head>
+  <body>
+    <header class="kepala">
+      <div class="wadah">
+        <a class="merek" href="/">
+          <span>Katalog Pribadi</span>
+          <strong>Perpustakaan Fathul</strong>
+        </a>
+        <nav class="nav" aria-label="Rak">
+          {daftarRak.map((r) => (
+            <a href={`/rak/${r.slug}/`} aria-current={path.startsWith(`/rak/${r.slug}`) ? 'page' : undefined}>
+              {r.nama.replace('Rak ', '')}
+            </a>
+          ))}
+          <a class="nav-pustakawan" href="/pustakawan/" aria-current={path.startsWith('/pustakawan') ? 'page' : undefined}>Pustakawan</a>
+        </nav>
+      </div>
+    </header>
+    <main class="wadah">
+      <slot />
+    </main>
+    <footer class="kaki">
+      <div class="wadah">© {new Date().getFullYear()} Fathul · fathul-ansori.my.id</div>
+    </footer>
+  </body>
+</html>

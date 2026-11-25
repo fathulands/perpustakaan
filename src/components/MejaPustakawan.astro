@@ -1,0 +1,15 @@
+---
+import { profil, tautan } from '../data/profil';
+---
+
+<aside class="meja" aria-label="Tentang pemilik perpustakaan">
+  <div class="cap" aria-hidden="true">{profil.nama.charAt(0)}</div>
+  <div>
+    <p class="label-mono">Meja Pustakawan</p>
+    <p class="meja-sapaan">{profil.sapaan}</p>
+    <p class="meja-tautan">
+      <a href="/pustakawan/">Kenalan lebih jauh →</a>
+      {tautan.map((t) => <a href={t.url} rel="me noopener" target={t.url.startsWith('mailto:') ? undefined : '_blank'}>{t.label}</a>)}
+    </p>
+  </div>
+</aside>
